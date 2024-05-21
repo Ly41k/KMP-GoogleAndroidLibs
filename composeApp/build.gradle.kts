@@ -42,6 +42,12 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.coroutines.core)
+
+            implementation(libs.androidx.navigation.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
