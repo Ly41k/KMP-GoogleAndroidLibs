@@ -4,10 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -53,15 +51,6 @@ fun SplashScreen(navAction: (SplashAction) -> Unit) {
                 )
             }
         }
-
-        CommonActionButton(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Onboarding",
-            enabled = true,
-            onClick = { navAction(SplashAction.OpenOnboardingScreen) }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         CommonActionButton(
             modifier = Modifier.fillMaxWidth(),

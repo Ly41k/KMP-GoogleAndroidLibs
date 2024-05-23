@@ -3,11 +3,7 @@ package navigation
 object NavigationTree {
 
     enum class Splash {
-        SplashFlow, Splash
-    }
-
-    enum class Onboarding {
-        OnboardingFlow, Onboarding
+        Splash
     }
 
     enum class Auth {

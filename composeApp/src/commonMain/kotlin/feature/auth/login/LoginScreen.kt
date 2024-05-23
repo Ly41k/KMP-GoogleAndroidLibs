@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -59,16 +60,7 @@ fun LoginScreen(navAction: (LoginAction) -> Unit) {
             isSecure = true,
             onValueChanged = {}
         )
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                modifier = Modifier.clickable { },
-                text = "Forgot password", color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 12.sp
-            )
-        }
+        Spacer(modifier = Modifier.height(30.dp))
 
         CommonActionButton(
             modifier = Modifier.fillMaxWidth(),
@@ -84,8 +76,10 @@ fun LoginScreen(navAction: (LoginAction) -> Unit) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                modifier = Modifier.clickable { },
-                text = "Refund policy", color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.clickable {
+                    navAction.invoke(LoginAction.OpenRegistrationScreen)
+                },
+                text = "Register", color = Color.Black,
                 fontSize = 12.sp
             )
         }
@@ -94,8 +88,10 @@ fun LoginScreen(navAction: (LoginAction) -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                modifier = Modifier.clickable { },
-                text = "Terms of service", color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.clickable {
+                    navAction.invoke(LoginAction.OpenForgotScreen)
+                },
+                text = "Forgot", color = Color.Black,
                 fontSize = 12.sp
             )
         }
