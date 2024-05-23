@@ -7,11 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import core.logout
 import core.navigateToAuth
 import core.navigateToMain
 import core.navigateToOnboading
 import feature.auth.navigation.AuthExternalAction
 import feature.auth.navigation.AuthNavGraph
+import feature.main.MainNavGraph
 import feature.splash.SplashAction
 import feature.splash.navigation.SplashNavGraph
 
@@ -44,6 +46,9 @@ fun AppNavGraph() {
                         }
                     }
                 )
+            }
+            composable(route = AppNavigation.Main.route) {
+                MainNavGraph(logout = { navController.logout() })
             }
         }
     }

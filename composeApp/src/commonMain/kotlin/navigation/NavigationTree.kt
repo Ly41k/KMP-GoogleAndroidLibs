@@ -15,22 +15,14 @@ object NavigationTree {
     }
 
     enum class Main {
-        Dashboard, Home, Order, Orders, More
+        Dashboard, Home, More
     }
 
     enum class Home {
-        HomeFlow, Home
+        HomeFlow, Home, Details
     }
 
     enum class More {
-        MoreFlow, More
-    }
-
-    enum class Orders {
-        OrdersFlow, Orders
-    }
-
-    enum class Order {
-        OrderFlow, OrderMainInfo, OrderServices, OrderAdditionalInfo, OrderFile, OrderPreview
+        MoreFlow, More, Settings
     }
 }
