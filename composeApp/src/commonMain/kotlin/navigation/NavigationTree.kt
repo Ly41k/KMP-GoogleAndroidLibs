@@ -11,14 +11,14 @@ object NavigationTree {
     }
 
     enum class Main {
-        Dashboard, Home, More
+        Dashboard, HomeFlow, MoreFlow
     }
 
     enum class Home {
-        HomeFlow, Home, Details
+        Home, Details
     }
 
     enum class More {
-        MoreFlow, More, Settings
+        More, Settings
     }
 }

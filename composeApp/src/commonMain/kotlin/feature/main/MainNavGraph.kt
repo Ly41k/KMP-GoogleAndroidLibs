@@ -23,12 +23,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import feature.home.HomeNavGraph
-import feature.more.MoreNavGraph
+import androidx.navigation.navigation
+import feature.home.DetailsAction
+import feature.home.DetailsScreen
+import feature.home.HomeAction
+import feature.home.HomeScreen
+import feature.more.MoreAction
+import feature.more.MoreScreen
+import feature.more.SettingAction
+import feature.more.SettingScreen
+import navigation.NavigationTree
 
 @Composable
 fun MainNavGraph(logout: () -> Unit) {
@@ -45,8 +55,48 @@ fun MainNavGraph(logout: () -> Unit) {
                 navController = navBottomBarController,
                 modifier = Modifier.fillMaxSize()
             ) {
-                composable(route = MainNavigation.Home.route) { HomeNavGraph(logout = logout) }
-                composable(route = MainNavigation.More.route) { MoreNavGraph(logout = logout) }
+                navigation(
+                    startDestination = NavigationTree.Home.Home.name,
+                    route = MainNavigation.Home.route
+                ) {
+                    composable(route = NavigationTree.Home.Home.name) {
+                        HomeScreen {
+                            when (it) {
+                                HomeAction.OpenDetailsScreen -> navBottomBarController.navigate(NavigationTree.Home.Details.name)
+                            }
+                        }
+                    }
+                    composable(route = NavigationTree.Home.Details.name) {
+                        DetailsScreen {
+                            when (it) {
+                                DetailsAction.Back -> navBottomBarController.popBackStack()
+                                DetailsAction.OpenSettingScreen -> {
+                                    navBottomBarController.navigate(NavigationTree.More.Settings.name)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                navigation(
+                    startDestination = NavigationTree.More.More.name,
+                    route = MainNavigation.More.route
+                ) {
+                    composable(route = NavigationTree.More.More.name) {
+                        MoreScreen {
+                            when (it) {
+                                MoreAction.OpenSettingScreen -> navBottomBarController.navigate(NavigationTree.More.Settings.name)
+                            }
+                        }
+                    }
+                    composable(route = NavigationTree.More.Settings.name) {
+                        SettingScreen {
+                            when (it) {
+                                SettingAction.Back -> navBottomBarController.popBackStack()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -56,7 +106,7 @@ fun MainNavGraph(logout: () -> Unit) {
 fun BottomNavigationUI(navController: NavController) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val currentDestination = navBackStackEntry?.destination
 
     Card(
         modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primaryContainer),
@@ -73,35 +123,37 @@ fun BottomNavigationUI(navController: NavController) {
             tonalElevation = 8.dp
         ) {
 
-            val items = getMainNavigationList()
-            items.forEach {
-                val isSelected = it.route == currentRoute
-                NavigationBarItem(label = { Text(text = it.title, fontSize = 10.sp) },
-                    selected = it.route == currentRoute,
+            val items = listOf(MainNavigation.Home, MainNavigation.More)
+            items.forEach { screen ->
+                val isSelected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                NavigationBarItem(label = { Text(text = screen.title, fontSize = 10.sp) },
+                    selected = isSelected,
                     icon = {
-                        when (it) {
+                        when (screen) {
                             MainNavigation.Home,
-                            MainNavigation.More -> TabItemIcon(it, isSelected)
+                            MainNavigation.More -> TabItemIcon(screen, isSelected)
                         }
                     },
                     colors = DefaultNavigationBarItemTheme(),
                     onClick = {
-                        if (currentRoute != it.route) {
-                            navController.navigate(it.route) {
-                                navController.graph.startDestinationRoute?.let { route ->
-                                    popUpTo(route) { saveState = true }
-                                }
-                                launchSingleTop = true
-                                restoreState = true
+                        navController.navigate(screen.route) {
+                            // Pop up to  the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            // on the back stack as users select items
+                            popUpTo(navController.graph.findStartDestination().displayName) {
+                                saveState = true
                             }
+                            // Avoid multiple copies of the same destination when
+                            // reselecting the same item
+                            launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
                         }
                     })
             }
         }
     }
 }
-
-private fun getMainNavigationList(): List<MainNavigation> = listOf(MainNavigation.Home, MainNavigation.More)
 
 @Composable
 fun TabItemIcon(navItem: MainNavigation, isSelected: Boolean) {
