@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -55,46 +57,53 @@ fun MainNavGraph(logout: () -> Unit) {
                 navController = navBottomBarController,
                 modifier = Modifier.fillMaxSize()
             ) {
-                navigation(
-                    startDestination = NavigationTree.Home.Home.name,
-                    route = MainNavigation.Home.route
-                ) {
-                    composable(route = NavigationTree.Home.Home.name) {
-                        HomeScreen {
-                            when (it) {
-                                HomeAction.OpenDetailsScreen -> navBottomBarController.navigate(NavigationTree.Home.Details.name)
-                            }
-                        }
-                    }
-                    composable(route = NavigationTree.Home.Details.name) {
-                        DetailsScreen {
-                            when (it) {
-                                DetailsAction.Back -> navBottomBarController.popBackStack()
-                                DetailsAction.OpenSettingScreen -> {
-                                    navBottomBarController.navigate(NavigationTree.More.Settings.name)
-                                }
-                            }
-                        }
-                    }
-                }
+                homeGraph(navBottomBarController)
+                moreGraph(navBottomBarController)
+            }
+        }
+    }
+}
 
-                navigation(
-                    startDestination = NavigationTree.More.More.name,
-                    route = MainNavigation.More.route
-                ) {
-                    composable(route = NavigationTree.More.More.name) {
-                        MoreScreen {
-                            when (it) {
-                                MoreAction.OpenSettingScreen -> navBottomBarController.navigate(NavigationTree.More.Settings.name)
-                            }
-                        }
-                    }
-                    composable(route = NavigationTree.More.Settings.name) {
-                        SettingScreen {
-                            when (it) {
-                                SettingAction.Back -> navBottomBarController.popBackStack()
-                            }
-                        }
+private fun NavGraphBuilder.moreGraph(navController: NavHostController) {
+    navigation(
+        startDestination = NavigationTree.More.More.name,
+        route = MainNavigation.More.route
+    ) {
+        composable(route = NavigationTree.More.More.name) {
+            MoreScreen {
+                when (it) {
+                    MoreAction.OpenSettingScreen -> navController.navigate(NavigationTree.More.Settings.name)
+                }
+            }
+        }
+        composable(route = NavigationTree.More.Settings.name) {
+            SettingScreen {
+                when (it) {
+                    SettingAction.Back -> navController.popBackStack()
+                }
+            }
+        }
+    }
+}
+
+private fun NavGraphBuilder.homeGraph(navController: NavHostController) {
+    navigation(
+        startDestination = NavigationTree.Home.Home.name,
+        route = MainNavigation.Home.route
+    ) {
+        composable(route = NavigationTree.Home.Home.name) {
+            HomeScreen {
+                when (it) {
+                    HomeAction.OpenDetailsScreen -> navController.navigate(NavigationTree.Home.Details.name)
+                }
+            }
+        }
+        composable(route = NavigationTree.Home.Details.name) {
+            DetailsScreen {
+                when (it) {
+                    DetailsAction.Back -> navController.popBackStack()
+                    DetailsAction.OpenSettingScreen -> {
+                        navController.navigate(NavigationTree.More.Settings.name)
                     }
                 }
             }
@@ -104,7 +113,6 @@ fun MainNavGraph(logout: () -> Unit) {
 
 @Composable
 fun BottomNavigationUI(navController: NavController) {
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
